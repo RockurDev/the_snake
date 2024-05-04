@@ -76,9 +76,13 @@ class GameObject:
         как объект будет отрисовываться на экране..
         """
 
-    def draw_rectangle(self, screen, color, rect, width=0):
-        """Метод для отрисовки прямоугольника."""
-        pygame.draw.rect(screen, color, rect, width)
+    def draw_cell(self, position, color):
+        """Метод для отрисовки одной клетки на игровом поле."""
+        rect = pygame.Rect(position, (GRID_SIZE, GRID_SIZE))
+        pygame.draw.rect(screen, color, rect)
+
+        if color != BOARD_BACKGROUND_COLOR:
+            pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
 
 
 class Apple(GameObject):
@@ -103,12 +107,6 @@ class Apple(GameObject):
         y = GRID_SIZE * randint(0, GRID_HEIGHT - 1)
         self.position = (x, y)
 
-    def draw(self):
-        """Метод отрисовывает объект-камень на экране."""
-        rect = pygame.Rect(self.position, (GRID_SIZE, GRID_SIZE))
-        self.draw_rectangle(screen, self.body_color, rect)
-        self.draw_rectangle(screen, BORDER_COLOR, rect, 1)
-
 
 class Rock(GameObject):
     """
@@ -130,12 +128,6 @@ class Rock(GameObject):
         x = GRID_SIZE * randint(0, GRID_WIDTH - 1)
         y = GRID_SIZE * randint(0, GRID_HEIGHT - 1)
         self.position = (x, y)
-
-    def draw(self):
-        """Метод отрисовывает объект-камень на экране."""
-        rect = pygame.Rect(self.position, (GRID_SIZE, GRID_SIZE))
-        self.draw_rectangle(screen, self.body_color, rect)
-        self.draw_rectangle(screen, BORDER_COLOR, rect, 1)
 
 
 class Snake(GameObject):
@@ -175,19 +167,15 @@ class Snake(GameObject):
         # Добавление координаты головы
         self.positions.insert(0, (coord_x, coord_y))
 
-    def draw(self):
+    def _draw(self):
         """Метод для отрисовки змейки и затирания следа."""
         # Отрисовка головы змейки
-        head_rect = pygame.Rect(
-            self.get_head_position(), (GRID_SIZE, GRID_SIZE)
-        )
-        self.draw_rectangle(screen, self.body_color, head_rect)
-        self.draw_rectangle(screen, BORDER_COLOR, head_rect, 1)
+        self.draw_cell(self.get_head_position(), self.body_color)
+        self.draw_cell(self.get_head_position(), BORDER_COLOR)
 
         # Затирание последнего сегмента
         if self.last:
-            last_rect = pygame.Rect(self.last, (GRID_SIZE, GRID_SIZE))
-            self.draw_rectangle(screen, BOARD_BACKGROUND_COLOR, last_rect)
+            self.draw_cell(self.last, BOARD_BACKGROUND_COLOR)
 
     def get_head_position(self):
         """Метод возращает координаты головы змейки."""
@@ -202,7 +190,7 @@ class Snake(GameObject):
         self.next_direction = None
         self.last = None
         self.length = 1
-        self.positions = [(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)]
+        self.positions = [SCREEN_CENTER]
         self.direction = choice((UP, RIGHT, DOWN, LEFT))
 
 
@@ -238,16 +226,13 @@ def main():
     while rock.position in (snake.position, apple.position):
         rock.randomize_position()
 
-    apple.draw()
-    snake.draw()
-
     while True:
         clock.tick(SPEED)
 
         handle_keys(snake)
         snake.update_direction(snake.next_direction)
         snake.move()
-
+        
         if (
             snake.get_head_position() in snake.positions[2:]
             or snake.get_head_position() == rock.position
@@ -261,9 +246,14 @@ def main():
                 apple.randomize_position()
             snake.length += 1
 
-        snake.draw()
-        apple.draw()
-        rock.draw()
+        apple.draw_cell(apple.position, apple.body_color)
+        rock.draw_cell(rock.position, rock.body_color)
+
+        # Отрисовка головы змейки
+        snake.draw_cell(snake.get_head_position(), snake.body_color)
+        # Затирание последнего сегмента
+        if snake.last:
+            snake.draw_cell(snake.last, BOARD_BACKGROUND_COLOR)
 
         pygame.display.update()
 
