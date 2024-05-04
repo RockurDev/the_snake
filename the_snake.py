@@ -232,7 +232,7 @@ def main():
         handle_keys(snake)
         snake.update_direction(snake.next_direction)
         snake.move()
-        
+
         if (
             snake.get_head_position() in snake.positions[2:]
             or snake.get_head_position() == rock.position
