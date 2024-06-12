@@ -18,8 +18,10 @@ You can install the required Pygame version using pip and the requirements.txt f
    git clone https://github.com/RockurDev/the_snake.git 
    cd the_snake
    ```
-3. Run the game
-   ```python the_snake.py```
+3. Run the game:
+   ```
+   python the_snake.py
+   ```
 
 ## Controls:
 Arrow Keys: Move the snake (Up, Down, Left, Right)
