@@ -10,14 +10,16 @@ This is a classic Snake game implemented in Python using the Pygame library. The
 - Python 3.9.12
 - Pygame library (version specified in requirements.txt)
 You can install the required Pygame version using pip and the requirements.txt file:
-''' pip install -r requirements.txt '''
+```pip install -r requirements.txt```
 
 ## How to Run
 1. Clone the repository:
-''' git clone https://github.com/RockurDev/the_snake.git 
-   cd the_snake '''
+   ```
+   git clone https://github.com/RockurDev/the_snake.git 
+   cd the_snake
+   ```
 3. Run the game
-''' python the_snake.py '''
+   ```python the_snake.py```
 
 ## Controls:
 Arrow Keys: Move the snake (Up, Down, Left, Right)
